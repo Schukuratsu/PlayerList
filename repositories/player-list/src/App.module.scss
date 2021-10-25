@@ -1,0 +1,13 @@
+.main{
+  width: fit-content;
+  margin: 0 auto;
+  padding: 10px 0px;
+
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: stretch;
+
+  .participationForm{
+    margin-top: 20px;
+  }
+}

@@ -1,0 +1,14 @@
+.playerItem {
+  width: 100%;
+  display: flex;
+  gap: 5px;
+
+  .positionLabel {
+    width: 22px;
+    text-align: end;
+  }
+  
+  .nameLabel.empty {
+    color: #0003;
+  }
+}
