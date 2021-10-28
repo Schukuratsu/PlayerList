@@ -12,3 +12,7 @@ sequelize (orm): https://sequelize.org/master/index.html
 
 react: https://reactjs.org/
 [em breve] antd: https://ant.design/
+
+# tutoriais úteis:
+
+Creating Sequelize Associations with the Sequelize CLI: https://levelup.gitconnected.com/creating-sequelize-associations-with-the-sequelize-cli-tool-d83caa902233
