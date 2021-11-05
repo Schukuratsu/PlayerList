@@ -1,5 +1,22 @@
 {
-  "dependencies": {
-    "sequelize-cli": "^6.2.0"
-  }
+  "name": "player-list",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "repositories/*"
+    ]
+  },
+  "version": "1.0.0",
+  "description": "gerenciador de lista de presença open-source",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Schukuratsu/PlayerList.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Schukuratsu/PlayerList/issues"
+  },
+  "homepage": "https://github.com/Schukuratsu/PlayerList#readme"
 }

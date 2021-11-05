@@ -1,9 +1,11 @@
 {
-  "name": "list-api",
+  "name": "@player-list/list-api",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "mig": "sequelize-mig migration:make -n",
+    "up": "sequelize-cli db:migrate"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -14,5 +16,9 @@
     "pg-hstore": "^2.3.4",
     "pg-promise": "^10.11.1",
     "sequelize": "^6.8.0"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.2.0",
+    "sequelize-mig": "^3.1.3"
   }
 }
