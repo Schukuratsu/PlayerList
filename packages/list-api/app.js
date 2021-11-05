@@ -3,9 +3,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var gamesRouter = require('./routes/games');
-var playersRouter = require('./routes/players');
+var indexRouter = require('./src/routes/index');
+var gamesRouter = require('./src/routes/games');
+var playersRouter = require('./src/routes/players');
 
 var app = express();
 
