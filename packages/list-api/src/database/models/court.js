@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   class Court extends Model {
     static associate(models) {
       Court.belongsTo(models.Gym);
-      Court.hasMany(models.Reservation);
+      Court.hasMany(models.Schedule);
       Court.belongsToMany(models.Sport, { through: 'court_sport' });
       Court.hasMany(models.CourtPicture);
       Court.belongsTo(models.Floor);
