@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       scheduleStart: { type: DataTypes.DATE, allowNull: false },
       scheduleEnd: { type: DataTypes.DATE, allowNull: false },
       originalPrice: { type: DataTypes.FLOAT, allowNull: false },
+      status: { type: DataTypes.ENUM('pending','approved','denied','canceled'), allowNull: false },
     },
     {
       sequelize,
