@@ -1,11 +1,8 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-
-var indexRouter = require('./src/routes/index');
-var gamesRouter = require('./src/routes/games');
-var playersRouter = require('./src/routes/players');
+import express from 'express';
+import path from 'path';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+import routers from './app/routes';
 
 var app = express();
 
@@ -15,8 +12,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/games', gamesRouter);
-app.use('/players', playersRouter);
+routers.forEach(({ route, router }) => {
+  app.use(route, router);
+});
 
 module.exports = app;
