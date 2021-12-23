@@ -1,5 +1,5 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict';
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Administrator extends Model {
     static associate(models) {
@@ -8,11 +8,13 @@ module.exports = (sequelize, DataTypes) => {
   }
   Administrator.init(
     {
+      registration: DataTypes.STRING,
+      registrationType: DataTypes.ENUM('cpf', 'cnpj'),
     },
     {
       sequelize,
-      modelName: "Administrator",
-    }
+      modelName: 'Administrator',
+    },
   );
   return Administrator;
 };
