@@ -1,21 +1,12 @@
 import express from 'express';
+import { administratorControllers } from '../controllers/administrator';
+import { createAdministratorRules } from '../validators/adminstrator';
+import { validate } from '../validators';
 
 const route = '/administrator';
 const router = express.Router();
 
 /* POST adiciona jogador em um jogo. */
-router.post('/', function (req, res, next) {
-  res.send('respond with a resource');
-});
-
-/* DELETE remove jogador de um jogo. */
-router.delete('/:playerId', function (req, res, next) {
-  res.send('respond with a resource');
-});
-
-/* PATCH edita jogador em um jogo. */
-router.post('/:playerId', function (req, res, next) {
-  res.send('respond with a resource');
-});
+router.post('/', createAdministratorRules(), validate, administratorControllers.createAdministrator);
 
 export default { route, router };
