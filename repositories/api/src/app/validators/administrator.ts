@@ -1,5 +1,7 @@
 import { body } from 'express-validator';
 import db from '../../database/db';
+import { asyncCompare } from '../utils/password';
+
 export const createAdministratorRules = () => {
   return [
     body('email')
@@ -12,14 +14,19 @@ export const createAdministratorRules = () => {
       .bail()
       .custom(async (value, { req }) => {
         try {
+          console.log('teste1');
           const user = await db.User.findOne({ where: { email: req.body.email } });
+          console.log('teste2');
           if (Boolean(user)) {
+            console.log('teste3');
             return Promise.reject(new Error('email already in use'));
           }
-          return Promise.resolve(true);
         } catch {
+          console.log('teste4');
           return Promise.reject(new Error('server Error'));
         }
+        console.log('teste5');
+        return Promise.resolve(true);
       }),
     body('password')
       .not()
@@ -64,5 +71,36 @@ export const createAdministratorRules = () => {
       .bail()
       .isIn(['cpf', 'cnpj'])
       .withMessage('invalid registrationType'),
+  ];
+};
+
+export const loginAdministratorRules = () => {
+  return [
+    body('email').not().isEmpty().withMessage('email is required').bail().isEmail().withMessage('invalid email'),
+    body('password')
+      .not()
+      .isEmpty()
+      .withMessage('password is required')
+      .bail()
+      .matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,255}$/)
+      .withMessage('Invalid pasword')
+      .custom(async (value, { req }) => {
+        try {
+          const administrator = await db.Administrator.findOne({
+            where: { '$User.email$': req.body.email },
+            include: db.User,
+          });
+          if (!Boolean(administrator.User)) {
+            return Promise.reject(new Error('invalid credentials'));
+          }
+          const passwordMatches = await asyncCompare(req.body.password, administrator.User.password);
+          if (!passwordMatches) {
+            return Promise.reject(new Error('invalid credentials'));
+          }
+        } catch(err) {
+          return Promise.reject(new Error('invalid credentials'));
+        }
+        return Promise.resolve(true);
+      }),
   ];
 };
