@@ -6,7 +6,6 @@ import { validate } from '../validators';
 const route = '/administrator';
 const router = express.Router();
 
-/* POST adiciona jogador em um jogo. */
 router.post('/', createAdministratorRules(), validate, administratorControllers.createAdministrator);
 
 export default { route, router };

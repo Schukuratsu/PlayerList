@@ -9,20 +9,11 @@ import routers from './app/routes';
 
 const app = express();
 
-
-// view engine setup
-app.set('views', path.join(__dirname, '..', 'public'));
-app.set('view engine', 'jade');
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.get('/', (req, res) => {
-  res.render('index', { title: 'Express' });
-});
 
 routers.forEach(({ route, router }) => {
   app.use(route, router);
