@@ -3,7 +3,7 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class CourtPicture extends Model {
     static associate(models) {
-      CourtPicture.hasOne(models.Court)
+      CourtPicture.belongsTo(models.Court)
     }
   }
   CourtPicture.init(

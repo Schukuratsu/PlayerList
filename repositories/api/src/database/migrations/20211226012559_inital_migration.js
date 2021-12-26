@@ -3,53 +3,32 @@ const Sequelize = require("sequelize");
 /**
  * Actions summary:
  *
- * removeColumn(playerId) => "Players"
- * removeColumn(gameId) => "Players"
- * removeColumn(name) => "Players"
- * dropTable() => "Games", deps: []
  * createTable() => "Floors", deps: []
+ * createTable() => "Sports", deps: []
  * createTable() => "Users", deps: []
  * createTable() => "Administrators", deps: [Users]
  * createTable() => "Gyms", deps: [Administrators]
  * createTable() => "Customers", deps: [Users]
+ * createTable() => "Courts", deps: [Gyms, Floors]
  * createTable() => "CourtPictures", deps: [Courts]
- * createTable() => "Courts", deps: [Gyms, Floors, CourtPictures]
- * createTable() => "Reservations", deps: [Courts, Customers]
+ * createTable() => "Schedules", deps: [Courts]
  * createTable() => "Coupons", deps: [Gyms, Courts, Customers, Administrators]
  * createTable() => "GymPictures", deps: [Gyms]
+ * createTable() => "Reservations", deps: [Customers, Schedules]
  * createTable() => "CustomerCoupons", deps: [Customers, Coupons, Reservations]
- * createTable() => "Sports", deps: [Courts]
- * createTable() => "court_sport", deps: [Sports, Courts]
- * addColumn(ReservationId) => "Players"
- * addColumn(CustomerId) => "Players"
- * addColumn(position) => "Players"
+ * createTable() => "Players", deps: [Customers, Reservations]
+ * createTable() => "court_sport", deps: [Courts, Sports]
  *
  */
 
 const info = {
-  revision: 2,
-  name: "boleiros database",
-  created: "2021-12-21T06:05:41.417Z",
+  revision: 1,
+  name: "inital migration",
+  created: "2021-12-26T01:25:59.123Z",
   comment: "",
 };
 
 const migrationCommands = (transaction) => [
-  {
-    fn: "removeColumn",
-    params: ["Players", "playerId", { transaction }],
-  },
-  {
-    fn: "removeColumn",
-    params: ["Players", "gameId", { transaction }],
-  },
-  {
-    fn: "removeColumn",
-    params: ["Players", "name", { transaction }],
-  },
-  {
-    fn: "dropTable",
-    params: ["Games", { transaction }],
-  },
   {
     fn: "createTable",
     params: [
@@ -65,6 +44,38 @@ const migrationCommands = (transaction) => [
         description: {
           type: Sequelize.STRING,
           field: "description",
+          allowNull: false,
+        },
+        createdAt: {
+          type: Sequelize.DATE,
+          field: "createdAt",
+          allowNull: false,
+        },
+        updatedAt: {
+          type: Sequelize.DATE,
+          field: "updatedAt",
+          allowNull: false,
+        },
+      },
+      { transaction },
+    ],
+  },
+  {
+    fn: "createTable",
+    params: [
+      "Sports",
+      {
+        id: {
+          type: Sequelize.INTEGER,
+          field: "id",
+          autoIncrement: true,
+          primaryKey: true,
+          allowNull: false,
+        },
+        name: { type: Sequelize.STRING, field: "name", allowNull: false },
+        thumbnailUrl: {
+          type: Sequelize.STRING,
+          field: "thumbnailUrl",
           allowNull: false,
         },
         createdAt: {
@@ -109,6 +120,11 @@ const migrationCommands = (transaction) => [
           field: "lastName",
           allowNull: false,
         },
+        phoneNumber: {
+          type: Sequelize.STRING,
+          field: "phoneNumber",
+          allowNull: false,
+        },
         createdAt: {
           type: Sequelize.DATE,
           field: "createdAt",
@@ -134,6 +150,11 @@ const migrationCommands = (transaction) => [
           autoIncrement: true,
           primaryKey: true,
           allowNull: false,
+        },
+        registration: { type: Sequelize.STRING, field: "registration" },
+        registrationType: {
+          type: Sequelize.ENUM("cpf", "cnpj"),
+          field: "registrationType",
         },
         createdAt: {
           type: Sequelize.DATE,
@@ -171,6 +192,12 @@ const migrationCommands = (transaction) => [
         },
         name: { type: Sequelize.STRING, field: "name", allowNull: false },
         address: { type: Sequelize.STRING, field: "address", allowNull: false },
+        description: { type: Sequelize.STRING, field: "description" },
+        phoneNumber: {
+          type: Sequelize.STRING,
+          field: "phoneNumber",
+          allowNull: false,
+        },
         createdAt: {
           type: Sequelize.DATE,
           field: "createdAt",
@@ -230,41 +257,6 @@ const migrationCommands = (transaction) => [
   {
     fn: "createTable",
     params: [
-      "CourtPictures",
-      {
-        id: {
-          type: Sequelize.INTEGER,
-          field: "id",
-          autoIncrement: true,
-          primaryKey: true,
-          allowNull: false,
-        },
-        url: { type: Sequelize.STRING, field: "url", allowNull: false },
-        createdAt: {
-          type: Sequelize.DATE,
-          field: "createdAt",
-          allowNull: false,
-        },
-        updatedAt: {
-          type: Sequelize.DATE,
-          field: "updatedAt",
-          allowNull: false,
-        },
-        CourtId: {
-          type: Sequelize.INTEGER,
-          field: "CourtId",
-          onUpdate: "CASCADE",
-          onDelete: "SET NULL",
-          references: { model: "Courts", key: "id" },
-          allowNull: true,
-        },
-      },
-      { transaction },
-    ],
-  },
-  {
-    fn: "createTable",
-    params: [
       "Courts",
       {
         id: {
@@ -310,12 +302,39 @@ const migrationCommands = (transaction) => [
           references: { model: "Floors", key: "id" },
           allowNull: true,
         },
-        CourtPictureId: {
+      },
+      { transaction },
+    ],
+  },
+  {
+    fn: "createTable",
+    params: [
+      "CourtPictures",
+      {
+        id: {
           type: Sequelize.INTEGER,
-          field: "CourtPictureId",
+          field: "id",
+          autoIncrement: true,
+          primaryKey: true,
+          allowNull: false,
+        },
+        url: { type: Sequelize.STRING, field: "url", allowNull: false },
+        createdAt: {
+          type: Sequelize.DATE,
+          field: "createdAt",
+          allowNull: false,
+        },
+        updatedAt: {
+          type: Sequelize.DATE,
+          field: "updatedAt",
+          allowNull: false,
+        },
+        CourtId: {
+          type: Sequelize.INTEGER,
+          field: "CourtId",
           onUpdate: "CASCADE",
           onDelete: "SET NULL",
-          references: { model: "CourtPictures", key: "id" },
+          references: { model: "Courts", key: "id" },
           allowNull: true,
         },
       },
@@ -325,7 +344,7 @@ const migrationCommands = (transaction) => [
   {
     fn: "createTable",
     params: [
-      "Reservations",
+      "Schedules",
       {
         id: {
           type: Sequelize.INTEGER,
@@ -349,6 +368,16 @@ const migrationCommands = (transaction) => [
           field: "originalPrice",
           allowNull: false,
         },
+        status: {
+          type: Sequelize.ENUM(
+            "available",
+            "unavailable",
+            "canceled",
+            "scheduled"
+          ),
+          field: "status",
+          allowNull: false,
+        },
         createdAt: {
           type: Sequelize.DATE,
           field: "createdAt",
@@ -365,14 +394,6 @@ const migrationCommands = (transaction) => [
           onUpdate: "CASCADE",
           onDelete: "SET NULL",
           references: { model: "Courts", key: "id" },
-          allowNull: true,
-        },
-        CustomerId: {
-          type: Sequelize.INTEGER,
-          field: "CustomerId",
-          onUpdate: "CASCADE",
-          onDelete: "SET NULL",
-          references: { model: "Customers", key: "id" },
           allowNull: true,
         },
       },
@@ -491,6 +512,53 @@ const migrationCommands = (transaction) => [
   {
     fn: "createTable",
     params: [
+      "Reservations",
+      {
+        id: {
+          type: Sequelize.INTEGER,
+          field: "id",
+          autoIncrement: true,
+          primaryKey: true,
+          allowNull: false,
+        },
+        status: {
+          type: Sequelize.ENUM("pending", "approved", "denied", "canceled"),
+          field: "status",
+          allowNull: false,
+        },
+        createdAt: {
+          type: Sequelize.DATE,
+          field: "createdAt",
+          allowNull: false,
+        },
+        updatedAt: {
+          type: Sequelize.DATE,
+          field: "updatedAt",
+          allowNull: false,
+        },
+        CustomerId: {
+          type: Sequelize.INTEGER,
+          field: "CustomerId",
+          onUpdate: "CASCADE",
+          onDelete: "SET NULL",
+          references: { model: "Customers", key: "id" },
+          allowNull: true,
+        },
+        ScheduleId: {
+          type: Sequelize.INTEGER,
+          field: "ScheduleId",
+          onUpdate: "CASCADE",
+          onDelete: "SET NULL",
+          references: { model: "Schedules", key: "id" },
+          allowNull: true,
+        },
+      },
+      { transaction },
+    ],
+  },
+  {
+    fn: "createTable",
+    params: [
       "CustomerCoupons",
       {
         id: {
@@ -541,7 +609,7 @@ const migrationCommands = (transaction) => [
   {
     fn: "createTable",
     params: [
-      "Sports",
+      "Players",
       {
         id: {
           type: Sequelize.INTEGER,
@@ -550,10 +618,9 @@ const migrationCommands = (transaction) => [
           primaryKey: true,
           allowNull: false,
         },
-        name: { type: Sequelize.STRING, field: "name", allowNull: false },
-        thumbnailUrl: {
-          type: Sequelize.STRING,
-          field: "thumbnailUrl",
+        position: {
+          type: Sequelize.INTEGER,
+          field: "position",
           allowNull: false,
         },
         createdAt: {
@@ -566,12 +633,20 @@ const migrationCommands = (transaction) => [
           field: "updatedAt",
           allowNull: false,
         },
-        CourtId: {
+        CustomerId: {
           type: Sequelize.INTEGER,
-          field: "CourtId",
+          field: "CustomerId",
           onUpdate: "CASCADE",
           onDelete: "SET NULL",
-          references: { model: "Courts", key: "id" },
+          references: { model: "Customers", key: "id" },
+          allowNull: true,
+        },
+        ReservationId: {
+          type: Sequelize.INTEGER,
+          field: "ReservationId",
+          onUpdate: "CASCADE",
+          onDelete: "SET NULL",
+          references: { model: "Reservations", key: "id" },
           allowNull: true,
         },
       },
@@ -593,14 +668,6 @@ const migrationCommands = (transaction) => [
           field: "updatedAt",
           allowNull: false,
         },
-        SportId: {
-          type: Sequelize.INTEGER,
-          field: "SportId",
-          onUpdate: "CASCADE",
-          onDelete: "CASCADE",
-          references: { model: "Sports", key: "id" },
-          primaryKey: true,
-        },
         CourtId: {
           type: Sequelize.INTEGER,
           field: "CourtId",
@@ -609,66 +676,21 @@ const migrationCommands = (transaction) => [
           references: { model: "Courts", key: "id" },
           primaryKey: true,
         },
+        SportId: {
+          type: Sequelize.INTEGER,
+          field: "SportId",
+          onUpdate: "CASCADE",
+          onDelete: "CASCADE",
+          references: { model: "Sports", key: "id" },
+          primaryKey: true,
+        },
       },
-      { transaction },
-    ],
-  },
-  {
-    fn: "addColumn",
-    params: [
-      "Players",
-      "ReservationId",
-      {
-        type: Sequelize.INTEGER,
-        field: "ReservationId",
-        onUpdate: "CASCADE",
-        onDelete: "SET NULL",
-        references: { model: "Reservations", key: "id" },
-        allowNull: true,
-      },
-      { transaction },
-    ],
-  },
-  {
-    fn: "addColumn",
-    params: [
-      "Players",
-      "CustomerId",
-      {
-        type: Sequelize.INTEGER,
-        field: "CustomerId",
-        onUpdate: "CASCADE",
-        onDelete: "SET NULL",
-        references: { model: "Customers", key: "id" },
-        allowNull: true,
-      },
-      { transaction },
-    ],
-  },
-  {
-    fn: "addColumn",
-    params: [
-      "Players",
-      "position",
-      { type: Sequelize.INTEGER, field: "position", allowNull: false },
       { transaction },
     ],
   },
 ];
 
 const rollbackCommands = (transaction) => [
-  {
-    fn: "removeColumn",
-    params: ["Players", "ReservationId", { transaction }],
-  },
-  {
-    fn: "removeColumn",
-    params: ["Players", "CustomerId", { transaction }],
-  },
-  {
-    fn: "removeColumn",
-    params: ["Players", "position", { transaction }],
-  },
   {
     fn: "dropTable",
     params: ["Administrators", { transaction }],
@@ -707,7 +729,15 @@ const rollbackCommands = (transaction) => [
   },
   {
     fn: "dropTable",
+    params: ["Players", { transaction }],
+  },
+  {
+    fn: "dropTable",
     params: ["Reservations", { transaction }],
+  },
+  {
+    fn: "dropTable",
+    params: ["Schedules", { transaction }],
   },
   {
     fn: "dropTable",
@@ -720,75 +750,6 @@ const rollbackCommands = (transaction) => [
   {
     fn: "dropTable",
     params: ["court_sport", { transaction }],
-  },
-  {
-    fn: "createTable",
-    params: [
-      "Games",
-      {
-        id: {
-          type: Sequelize.INTEGER,
-          field: "id",
-          autoIncrement: true,
-          primaryKey: true,
-          allowNull: false,
-        },
-        title: { type: Sequelize.STRING, field: "title" },
-        description: { type: Sequelize.STRING, field: "description" },
-        createdAt: {
-          type: Sequelize.DATE,
-          field: "createdAt",
-          allowNull: false,
-        },
-        updatedAt: {
-          type: Sequelize.DATE,
-          field: "updatedAt",
-          allowNull: false,
-        },
-      },
-      { transaction },
-    ],
-  },
-  {
-    fn: "addColumn",
-    params: [
-      "Players",
-      "playerId",
-      {
-        type: Sequelize.INTEGER,
-        field: "playerId",
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-        references: { model: "Games", key: "id" },
-        allowNull: true,
-      },
-      { transaction },
-    ],
-  },
-  {
-    fn: "addColumn",
-    params: [
-      "Players",
-      "gameId",
-      {
-        type: Sequelize.INTEGER,
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-        references: { model: "Games", key: "id" },
-        allowNull: true,
-        field: "gameId",
-      },
-      { transaction },
-    ],
-  },
-  {
-    fn: "addColumn",
-    params: [
-      "Players",
-      "name",
-      { type: Sequelize.STRING, field: "name" },
-      { transaction },
-    ],
   },
 ];
 
