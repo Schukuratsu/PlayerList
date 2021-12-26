@@ -14,18 +14,13 @@ export const createAdministratorRules = () => {
       .bail()
       .custom(async (value, { req }) => {
         try {
-          console.log('teste1');
           const user = await db.User.findOne({ where: { email: req.body.email } });
-          console.log('teste2');
           if (Boolean(user)) {
-            console.log('teste3');
             return Promise.reject(new Error('email already in use'));
           }
         } catch {
-          console.log('teste4');
           return Promise.reject(new Error('server Error'));
         }
-        console.log('teste5');
         return Promise.resolve(true);
       }),
     body('password')
