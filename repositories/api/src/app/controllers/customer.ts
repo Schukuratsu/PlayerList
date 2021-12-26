@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import db from '../../database/db';
-import { createJwtToken } from '../utils/accessToken';
+import { createJwtToken } from '../services/accessToken';
 
 type Controllers = 'createCustomer' | 'loginCustomer';
 
