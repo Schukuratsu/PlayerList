@@ -4,15 +4,20 @@ sobe o banco com docker: `docker-compose up -d`
 
 # Backend
 
+iniciar o back-end: `yarn start`
+
 express: https://expressjs.com/
+
 sequelize (orm): https://sequelize.org/master/index.html
-[no futuro] sequelize-mig (autogerador de migrações do banco): https://www.npmjs.com/package/sequelize-mig
+
+sequelize-mig (autogerador de migrações do banco): https://www.npmjs.com/package/sequelize-mig
 
 # frontend
 
+iniciar o front-end: `yarn start`
+
 react: https://reactjs.org/
-[em breve] antd: https://ant.design/
 
-# tutoriais úteis:
+antd: https://ant.design/
 
-Creating Sequelize Associations with the Sequelize CLI: https://levelup.gitconnected.com/creating-sequelize-associations-with-the-sequelize-cli-tool-d83caa902233
+redux-toolkit: https://redux-toolkit.js.org/
