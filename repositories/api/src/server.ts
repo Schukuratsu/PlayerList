@@ -2,7 +2,6 @@ import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-import debug from 'debug';
 import http from 'http';
 import routers from './app/routes';
 
@@ -19,6 +18,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 routers.forEach(({ route, router }) => {
   app.use(route, router);
 });
+
+// www
 
 function normalizePort(val: string) {
   const port = parseInt(val, 10);
@@ -59,7 +60,7 @@ function onError(error: any) {
 function onListening() {
   const addr = server.address();
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
-  debug('list-api:server')('Listening on ' + bind);
+  console.log('Listening on ' + bind);
 }
 
 const port = normalizePort(process.env.PORT || '8000');
