@@ -78,7 +78,7 @@ export const loginAdministratorRules = () => {
       .withMessage('password is required')
       .bail()
       .matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,255}$/)
-      .withMessage('Invalid pasword')
+      .withMessage('invalid pasword')
       .custom(async (value, { req }) => {
         try {
           const administrator = await db.Administrator.findOne({

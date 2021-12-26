@@ -1,5 +1,6 @@
 import { body } from 'express-validator';
 import db from '../../database/db';
+import { asyncCompare } from '../utils/password';
 export const createCustomerRules = () => {
   return [
     body('email')
@@ -49,5 +50,36 @@ export const createCustomerRules = () => {
       .bail()
       .isMobilePhone('pt-BR')
       .withMessage('invalid phoneNumber'),
+  ];
+};
+
+export const loginCustomerRules = () => {
+  return [
+    body('email').not().isEmpty().withMessage('email is required').bail().isEmail().withMessage('invalid email'),
+    body('password')
+      .not()
+      .isEmpty()
+      .withMessage('password is required')
+      .bail()
+      .matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,255}$/)
+      .withMessage('invalid pasword')
+      .custom(async (value, { req }) => {
+        try {
+          const customer = await db.Customer.findOne({
+            where: { '$User.email$': req.body.email },
+            include: db.User,
+          });
+          if (!Boolean(customer.User)) {
+            return Promise.reject(new Error('invalid credentials'));
+          }
+          const passwordMatches = await asyncCompare(req.body.password, customer.User.password);
+          if (!passwordMatches) {
+            return Promise.reject(new Error('invalid credentials'));
+          }
+        } catch(err) {
+          return Promise.reject(new Error('invalid credentials'));
+        }
+        return Promise.resolve(true);
+      }),
   ];
 };
