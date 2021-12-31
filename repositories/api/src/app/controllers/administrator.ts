@@ -1,6 +1,8 @@
 import { RequestHandler } from 'express';
 import db from '../../database/db';
+import { welcomeEmail } from '../constants/emails';
 import { createJwtToken } from '../services/accessToken';
+import { sendMail } from '../services/mailer';
 
 type Controllers = 'createAdministrator' | 'loginAdministrator';
 
@@ -11,7 +13,8 @@ export const administratorControllers: Record<Controllers, RequestHandler> = {
       ...req.body,
       UserId: user.id,
     });
-    res.json({ id: administrator.id });
+    sendMail(req.body.email, welcomeEmail);
+    return res.json({ id: administrator.id });
   },
   loginAdministrator: async (req, res, next) => {
     try {
