@@ -1,6 +1,8 @@
 import { RequestHandler } from 'express';
 import db from '../../database/db';
+import { welcomeEmail } from '../constants/emails';
 import { createJwtToken } from '../services/accessToken';
+import { sendMail } from '../services/mailer';
 
 type Controllers = 'createCustomer' | 'loginCustomer';
 
@@ -11,6 +13,13 @@ export const customerControllers: Record<Controllers, RequestHandler> = {
       ...req.body,
       UserId: user.id,
     });
+    try {
+      sendMail(req.body.email, welcomeEmail);
+    } catch {
+      user.destroy()
+      customer.destroy()
+      return res.status(400).send('server error, check if given email is valid');
+    }
     res.json({ id: customer.id });
   },
   loginCustomer: async (req, res, next) => {
