@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       firstName: { type: DataTypes.STRING, allowNull: false },
       lastName: { type: DataTypes.STRING, allowNull: false },
       phoneNumber: { type: DataTypes.STRING, allowNull: false },
+      validated: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     },
     {
       sequelize,
