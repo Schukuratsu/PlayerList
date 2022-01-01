@@ -13,6 +13,7 @@ const getTransporter = () => {
     });
   } catch (error) {
     console.error(error);
+    throw new Error(error)
   }
 };
 
@@ -31,5 +32,6 @@ export const sendMail = async (to: string, template: EmailTemplate) => {
     console.log('Email sent: ' + info.response);
   } catch (error) {
     console.log(error);
+    throw new Error(error)
   }
 };

@@ -13,7 +13,13 @@ export const administratorControllers: Record<Controllers, RequestHandler> = {
       ...req.body,
       UserId: user.id,
     });
-    sendMail(req.body.email, welcomeEmail);
+    try {
+      sendMail(req.body.email, welcomeEmail);
+    } catch {
+      user.destroy()
+      administrator.destroy()
+      return res.status(400).send('server error, check if given email is valid');
+    }
     return res.json({ id: administrator.id });
   },
   loginAdministrator: async (req, res, next) => {
