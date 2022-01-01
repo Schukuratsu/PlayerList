@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import env from '../../config/env';
+import environment from '../../config/environment';
 
 export type JsonData = {
   customerId?: number;
@@ -11,7 +11,7 @@ export type JsonData = {
 };
 
 export const createJwtToken = (jsonData: JsonData) => {
-  return jwt.sign(jsonData, env.JWT_SECRET, {
+  return jwt.sign(jsonData, environment.JWT_SECRET, {
     expiresIn: 3000,
   });
 };
@@ -25,7 +25,7 @@ export const verifyJwtToken = async (
   else if (!token) res.status(401).json({ auth: false, message: 'No token provided.' });
   else
     try {
-      const decodedJwt = (await jwt.verify(token, env.JWT_SECRET)) as JsonData;
+      const decodedJwt = (await jwt.verify(token, environment.JWT_SECRET)) as JsonData;
       return {
         isAdministrator: !!decodedJwt.administratorId,
         id: decodedJwt.administratorId ?? decodedJwt.customerId,

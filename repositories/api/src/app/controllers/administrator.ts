@@ -1,6 +1,8 @@
 import { RequestHandler } from 'express';
 import db from '../../database/db';
-import { createJwtToken } from '../utils/accessToken';
+import { welcomeEmail } from '../constants/emails';
+import { createJwtToken } from '../services/accessToken';
+import { sendMail } from '../services/mailer';
 
 type Controllers = 'createAdministrator' | 'loginAdministrator';
 
@@ -11,7 +13,14 @@ export const administratorControllers: Record<Controllers, RequestHandler> = {
       ...req.body,
       UserId: user.id,
     });
-    res.json({ id: administrator.id });
+    try {
+      sendMail(req.body.email, welcomeEmail);
+    } catch {
+      user.destroy()
+      administrator.destroy()
+      return res.status(400).send('server error, check if given email is valid');
+    }
+    return res.json({ id: administrator.id });
   },
   loginAdministrator: async (req, res, next) => {
     try {

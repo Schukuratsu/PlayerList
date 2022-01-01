@@ -1,6 +1,6 @@
 import { body } from 'express-validator';
 import db from '../../database/db';
-import { asyncCompare } from '../utils/password';
+import { asyncCompare } from '../services/password';
 
 export const administratorRules = {
   createAdministrator: () => {
