@@ -18,10 +18,11 @@ export const customerRules = {
             if (Boolean(user)) {
               return Promise.reject(new Error('email already in use'));
             }
-            return Promise.resolve(true);
-          } catch {
+          } catch(error) {
+            console.error(error);
             return Promise.reject(new Error('server Error'));
           }
+          return Promise.resolve(true);
         }),
       body('password')
         .not()
