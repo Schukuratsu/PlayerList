@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 
 export default {
   JWT_SECRET: process.env.JWT_SECRET,
@@ -11,4 +11,5 @@ export default {
   MAIL_FROM: process.env.MAIL_FROM,
   MAIL_REPLY_TO: process.env.MAIL_REPLY_TO,
   ACCOUNT_VALIDATION_URL: process.env.ACCOUNT_VALIDATION_URL,
+  FORGOT_PASSWORD_URL: process.env.FORGOT_PASSWORD_URL,
 };

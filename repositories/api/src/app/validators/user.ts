@@ -1,5 +1,6 @@
-import { header } from 'express-validator';
+import { body, header } from 'express-validator';
 import environment from '../../config/environment';
+import db from '../../database/db';
 import { verifyAccessToken } from '../services/accessToken';
 
 export const userRules = {
@@ -19,6 +20,30 @@ export const userRules = {
             console.error(error);
             return Promise.reject(new Error('server Error'));
           }
+        }),
+    ];
+  },
+  forgotPassword: () => {
+    return [
+      body('email')
+        .not()
+        .isEmpty()
+        .withMessage('email is required')
+        .bail()
+        .isEmail()
+        .withMessage('invalid email')
+        .bail()
+        .custom(async (value, { req }) => {
+          try {
+            const user = await db.User.findOne({ where: { email: req.body.email } });
+            if (!Boolean(user)) {
+              return Promise.reject(new Error('email does not exist'));
+            }
+          } catch (error) {
+            console.error(error);
+            return Promise.reject(new Error('server Error'));
+          }
+          return Promise.resolve(true);
         }),
     ];
   },
