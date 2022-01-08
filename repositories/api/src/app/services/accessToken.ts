@@ -5,32 +5,21 @@ import environment from '../../config/environment';
 export type JsonData = {
   customerId?: number;
   administratorId?: number;
+  userId: number;
   email: string;
   firstName: string;
   lastName: string;
 };
 
-export const createJwtToken = (jsonData: JsonData) => {
-  return jwt.sign(jsonData, environment.JWT_SECRET, {
-    expiresIn: 3000,
-  });
+export const createAccessToken = (jsonData: JsonData, secret = environment.JWT_SECRET, expiresIn = 3000) => {
+  return jwt.sign(jsonData, secret, { expiresIn });
 };
 
-export const verifyJwtToken = async (
-  req: Request,
-  res: Response,
-): Promise<{ isAdministrator: boolean; id: number } | void> => {
-  const token = req.headers['x-access-token'];
-  if (Array.isArray(token)) res.status(401).json({ auth: false, message: 'Multiple tokens provided.' });
-  else if (!token) res.status(401).json({ auth: false, message: 'No token provided.' });
-  else
-    try {
-      const decodedJwt = (await jwt.verify(token, environment.JWT_SECRET)) as JsonData;
-      return {
-        isAdministrator: !!decodedJwt.administratorId,
-        id: decodedJwt.administratorId ?? decodedJwt.customerId,
-      };
-    } catch {
-      res.status(500).json({ auth: false, message: 'Failed to authenticate token.' });
-    }
+export const verifyAccessToken = (token: string, secret = environment.JWT_SECRET): JsonData => {
+  try {
+    return jwt.verify(token, secret) as JsonData;
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
+  }
 };

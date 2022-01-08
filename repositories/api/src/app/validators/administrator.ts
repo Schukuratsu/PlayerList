@@ -19,7 +19,8 @@ export const administratorRules = {
             if (Boolean(user)) {
               return Promise.reject(new Error('email already in use'));
             }
-          } catch {
+          } catch (error) {
+            console.error(error);
             return Promise.reject(new Error('server Error'));
           }
           return Promise.resolve(true);

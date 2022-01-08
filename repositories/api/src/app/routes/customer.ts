@@ -7,6 +7,7 @@ const route = '/customer';
 const router = express.Router();
 
 router.post('/', customerRules.createCustomer(), validate, customerControllers.createCustomer);
+
 router.post('/login', customerRules.loginCustomer(), validate, customerControllers.loginCustomer);
 
 export default { route, router };
