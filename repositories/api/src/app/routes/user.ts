@@ -9,4 +9,6 @@ const router = express.Router();
 
 router.post('/validate', userRules.validateUser(), validate, userControllers.validateUser);
 
+router.post('/forgot-password', userRules.forgotPassword(), validate, userControllers.forgotPassword);
+
 export default { route, router };

@@ -12,6 +12,13 @@ export const welcomeEmail = (accessToken: string): EmailTemplate => ({
   }\n\nEquipe QuadraAqui`,
 });
 
+export const forgotPasswordEmail = (accessToken: string): EmailTemplate => ({
+  subject: 'Esqueceu a sua senha?',
+  text: `Acesse o seguinte link para criar a sua nova senha: ${
+    environment.FORGOT_PASSWORD_URL + accessToken
+  }\n\nEquipe QuadraAqui`,
+});
+
 export const accountValidationEmail: EmailTemplate = {
   subject: 'Email confirmado com sucesso!',
   text: 'Agora você pode agendar quadras próximas de você de forma fácil através do site ou do aplicativo. Bons jogos!\n\nEquipe QuadraAqui.',
