@@ -86,7 +86,7 @@ export const administratorRules = {
               where: { '$User.email$': req.body.email },
               include: db.User,
             });
-            if (!Boolean(administrator.User)) {
+            if (!Boolean(administrator?.User)) {
               return Promise.reject(new Error('invalid credentials'));
             }
             const passwordMatches = await asyncCompare(req.body.password, administrator.User.password);
