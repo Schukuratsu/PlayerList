@@ -5,7 +5,7 @@ import { accountValidationEmail, forgotPasswordEmail } from '../constants/emails
 import { createAccessToken, verifyAccessToken } from '../services/accessToken';
 import { sendMail } from '../services/mailer';
 
-type Controllers = 'validateUser' | 'forgotPassword' | 'newPassword';
+type Controllers = 'validateUser' | 'forgotPassword' | 'newPassword' | 'changePassword';
 
 export const userControllers: Record<Controllers, RequestHandler> = {
   validateUser: async (req, res, next) => {
@@ -55,6 +55,23 @@ export const userControllers: Record<Controllers, RequestHandler> = {
         },
       });
       await user.update({ password: req.body.password });
+      await sendMail(user.email, accountValidationEmail);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send('server error');
+    }
+    return res.send();
+  },
+  changePassword: async (req, res, next) => {
+    const token = req.headers['x-access-token'] as string;
+    try {
+      const tokenData = verifyAccessToken(token);
+      const user = await db.User.findOne({
+        where: {
+          id: tokenData.userId,
+        },
+      });
+      await user.update({ password: req.body.newPassword });
       await sendMail(user.email, accountValidationEmail);
     } catch (error) {
       console.error(error);

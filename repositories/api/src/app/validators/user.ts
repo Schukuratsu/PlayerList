@@ -2,6 +2,7 @@ import { body, header } from 'express-validator';
 import environment from '../../config/environment';
 import db from '../../database/db';
 import { verifyAccessToken } from '../services/accessToken';
+import { asyncCompare } from '../services/password';
 
 export const userRules = {
   validateUser: () => {
@@ -68,6 +69,50 @@ export const userRules = {
         .not()
         .isEmpty()
         .withMessage('password is required')
+        .bail()
+        .matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,255}$/)
+        .withMessage('Invalid pasword'),
+    ];
+  },
+  changePassword: () => {
+    return [
+      body('oldPassword')
+        .not()
+        .isEmpty()
+        .withMessage('password is required')
+        .bail()
+        .matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,255}$/)
+        .withMessage('invalid pasword')
+        .bail()
+        .custom(async (value, { req }) => {
+          if (req.body.oldPassword === req.body.newPassword) {
+            return Promise.reject('newPassword cannot be the same as oldPassword');
+          }
+        })
+        .bail()
+        .custom(async (value, { req }) => {
+          try {
+            const token = verifyAccessToken(req.headers['x-access-token'])
+            const user = await db.User.findOne({
+              where: { id: token.userId },
+            });
+            if (!Boolean(user)) {
+              return Promise.reject(new Error('invalid credentials'));
+            }
+            const passwordMatches = await asyncCompare(req.body.oldPassword, user.password);
+            if (!passwordMatches) {
+              return Promise.reject(new Error('invalid credentials'));
+            }
+          } catch (err) {
+            console.log(err)
+            return Promise.reject(new Error('invalid credentials'));
+          }
+          return Promise.resolve(true);
+        }),
+      body('newPassword')
+        .not()
+        .isEmpty()
+        .withMessage('newPassword is required')
         .bail()
         .matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,255}$/)
         .withMessage('Invalid pasword'),
