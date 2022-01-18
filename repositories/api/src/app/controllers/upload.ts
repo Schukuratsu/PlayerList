@@ -1,5 +1,7 @@
 import { RequestHandler } from 'express';
 import sharp from 'sharp';
+import { uuid } from 'uuidv4';
+import slugify from 'slugify';
 import { uploadFile } from '../services/storage';
 
 type Controllers = 'uploadImage';
@@ -36,7 +38,9 @@ export const uploadControllers: Record<Controllers, RequestHandler> = {
 
       const resultBuffer = await transform.toBuffer();
 
-      const fileUrl = await uploadFile(file.originalname, resultBuffer);
+      const serverFilename = `${uuid()}-${slugify(file.originalname)}`;
+
+      const fileUrl = await uploadFile(serverFilename, resultBuffer);
 
       res.json({
         fileUrl,
@@ -45,6 +49,5 @@ export const uploadControllers: Record<Controllers, RequestHandler> = {
       console.error(error);
       return res.status(500).send('server error');
     }
-    return res.send();
   },
 };
