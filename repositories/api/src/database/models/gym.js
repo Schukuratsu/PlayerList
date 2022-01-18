@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Gym.belongsTo(models.Administrator)
       Gym.hasOne(models.Court)
-      Gym.hasMany(models.GymPicture)
+      Gym.belongsToMany(models.Picture, { through: 'gym_picture' })
     }
   }
   Gym.init(

@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       Court.belongsTo(models.Gym);
       Court.hasMany(models.Schedule);
       Court.belongsToMany(models.Sport, { through: 'court_sport' });
-      Court.hasMany(models.CourtPicture);
+      Court.belongsToMany(models.Picture, { through: 'court_picture' });
       Court.belongsTo(models.Floor);
     }
   }
