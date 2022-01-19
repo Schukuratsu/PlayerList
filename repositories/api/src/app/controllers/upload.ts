@@ -16,10 +16,13 @@ export const uploadControllers: Record<Controllers, RequestHandler> = {
     const startX = parseInt(req.body.startX) || undefined;
     const startY = parseInt(req.body.startY) || undefined;
 
+    let buffer = file.buffer;
+
     try {
-      let transform = sharp(file.buffer);
+      let transform;
 
       if (height !== undefined && width !== undefined && startX !== undefined && startY !== undefined) {
+        transform = sharp(buffer);
         transform = transform.extract({
           left: startX,
           top: startY,
@@ -29,6 +32,7 @@ export const uploadControllers: Record<Controllers, RequestHandler> = {
       }
 
       if (resultHeight !== undefined || resultWidth !== undefined) {
+        if (!transform) transform = sharp(buffer);
         transform.resize({
           height: resultHeight,
           width: resultWidth,
@@ -36,11 +40,11 @@ export const uploadControllers: Record<Controllers, RequestHandler> = {
         });
       }
 
-      const resultBuffer = await transform.toBuffer();
+      if(transform) buffer = await transform.toBuffer();
 
       const serverFilename = `${uuid()}-${slugify(file.originalname)}`;
 
-      const fileUrl = await uploadFile(serverFilename, resultBuffer);
+      const fileUrl = await uploadFile(serverFilename, buffer);
 
       res.json({
         fileUrl,
