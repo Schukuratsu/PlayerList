@@ -1,6 +1,9 @@
 import { RequestHandler } from 'express';
 import sharp from 'sharp';
+import uuid from 'uuid';
+import slugify from 'slugify';
 import { uploadFile } from '../services/storage';
+import db from '../../database/db';
 
 type Controllers = 'uploadImage';
 
@@ -14,10 +17,13 @@ export const uploadControllers: Record<Controllers, RequestHandler> = {
     const startX = parseInt(req.body.startX) || undefined;
     const startY = parseInt(req.body.startY) || undefined;
 
+    let buffer = file.buffer;
+
     try {
-      let transform = sharp(file.buffer);
+      let transform;
 
       if (height !== undefined && width !== undefined && startX !== undefined && startY !== undefined) {
+        transform = sharp(buffer);
         transform = transform.extract({
           left: startX,
           top: startY,
@@ -27,6 +33,7 @@ export const uploadControllers: Record<Controllers, RequestHandler> = {
       }
 
       if (resultHeight !== undefined || resultWidth !== undefined) {
+        if (!transform) transform = sharp(buffer);
         transform.resize({
           height: resultHeight,
           width: resultWidth,
@@ -34,17 +41,26 @@ export const uploadControllers: Record<Controllers, RequestHandler> = {
         });
       }
 
-      const resultBuffer = await transform.toBuffer();
+      if(transform) buffer = await transform.toBuffer();
 
-      const fileUrl = await uploadFile(file.originalname, resultBuffer);
+      const serverFilename = `${uuid.v4()}-${slugify(file.originalname)}`;
+
+      const fileUrl = await uploadFile(serverFilename, buffer);
+
+      const picture = await db.Picture.create({
+        url: serverFilename,
+        originalFilename: file.originalname,
+        mimeType: file.mimetype,
+        size: buffer.byteLength,
+      });
 
       res.json({
         fileUrl,
+        id: picture.id
       });
     } catch (error) {
       console.error(error);
       return res.status(500).send('server error');
     }
-    return res.send();
   },
 };
