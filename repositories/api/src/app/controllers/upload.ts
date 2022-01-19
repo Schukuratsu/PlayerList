@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import sharp from 'sharp';
-import { uuid } from 'uuidv4';
+import uuid from 'uuid';
 import slugify from 'slugify';
 import { uploadFile } from '../services/storage';
 
@@ -42,7 +42,7 @@ export const uploadControllers: Record<Controllers, RequestHandler> = {
 
       if(transform) buffer = await transform.toBuffer();
 
-      const serverFilename = `${uuid()}-${slugify(file.originalname)}`;
+      const serverFilename = `${uuid.v4()}-${slugify(file.originalname)}`;
 
       const fileUrl = await uploadFile(serverFilename, buffer);
 
