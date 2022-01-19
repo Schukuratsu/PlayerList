@@ -11,7 +11,6 @@ module.exports = (sequelize, DataTypes) => {
     {
       url: { type: DataTypes.STRING, allowNull: false },
       originalFilename: { type: DataTypes.STRING, allowNull: false },
-      encoding: { type: DataTypes.STRING, allowNull: false },
       mimeType: { type: DataTypes.STRING, allowNull: false },
       size: { type: DataTypes.STRING, allowNull: false },
     },
