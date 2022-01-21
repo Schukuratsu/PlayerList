@@ -14,9 +14,10 @@ export const validate: RequestHandler = (req, res, next) => {
   });
 };
 
-export * from './administrator';
 export * from './authentication';
-export * from './customer';
 export * from './user';
+export * from './administrator';
+export * from './customer';
 export * from './upload';
 export * from './gym';
+export * from './floor';
