@@ -19,3 +19,4 @@ export * from './authentication';
 export * from './customer';
 export * from './user';
 export * from './upload';
+export * from './gym';
