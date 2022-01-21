@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import sharp from 'sharp';
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import slugify from 'slugify';
 import { uploadFile } from '../services/storage';
 import db from '../../database/db';
@@ -41,9 +41,9 @@ export const uploadControllers: Record<Controllers, RequestHandler> = {
         });
       }
 
-      if(transform) buffer = await transform.toBuffer();
+      if (transform) buffer = await transform.toBuffer();
 
-      const serverFilename = `${uuid.v4()}-${slugify(file.originalname)}`;
+      const serverFilename = `${uuidv4()}-${slugify(file.originalname)}`;
 
       const fileUrl = await uploadFile(serverFilename, buffer);
 
@@ -56,7 +56,7 @@ export const uploadControllers: Record<Controllers, RequestHandler> = {
 
       res.json({
         fileUrl,
-        id: picture.id
+        id: picture.id,
       });
     } catch (error) {
       console.error(error);
