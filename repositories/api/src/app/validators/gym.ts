@@ -18,11 +18,11 @@ export const gymRules = {
           try {
             const validCity = await isValidCityId(req.body.cityId);
             if (!validCity) {
-              return Promise.reject(new Error('invalid cityId'));
+              return Promise.reject('invalid cityId');
             }
           } catch (error) {
             console.error(error);
-            return Promise.reject(new Error('server Error'));
+            return Promise.reject('server Error');
           }
           return Promise.resolve(true);
         }),

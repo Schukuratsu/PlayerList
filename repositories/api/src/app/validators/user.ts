@@ -19,7 +19,7 @@ export const userRules = {
             return Promise.resolve(true);
           } catch (error) {
             console.error(error);
-            return Promise.reject(new Error('server Error'));
+            return Promise.reject('server Error');
           }
         }),
     ];
@@ -38,11 +38,11 @@ export const userRules = {
           try {
             const user = await db.User.findOne({ where: { email: req.body.email } });
             if (!Boolean(user)) {
-              return Promise.reject(new Error('email does not exist'));
+              return Promise.reject('email does not exist');
             }
           } catch (error) {
             console.error(error);
-            return Promise.reject(new Error('server Error'));
+            return Promise.reject('server Error');
           }
           return Promise.resolve(true);
         }),
@@ -62,7 +62,7 @@ export const userRules = {
             return Promise.resolve(true);
           } catch (error) {
             console.error(error);
-            return Promise.reject(new Error('server Error'));
+            return Promise.reject('server Error');
           }
         }),
       body('password')
@@ -97,15 +97,15 @@ export const userRules = {
               where: { id: token.userId },
             });
             if (!Boolean(user)) {
-              return Promise.reject(new Error('invalid credentials'));
+              return Promise.reject('invalid credentials');
             }
             const passwordMatches = await asyncCompare(req.body.oldPassword, user.password);
             if (!passwordMatches) {
-              return Promise.reject(new Error('invalid credentials'));
+              return Promise.reject('invalid credentials');
             }
           } catch (err) {
             console.log(err)
-            return Promise.reject(new Error('invalid credentials'));
+            return Promise.reject('invalid credentials');
           }
           return Promise.resolve(true);
         }),
