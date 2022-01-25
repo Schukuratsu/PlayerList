@@ -16,11 +16,11 @@ export const customerRules = {
           try {
             const user = await db.User.findOne({ where: { email: req.body.email } });
             if (Boolean(user)) {
-              return Promise.reject(new Error('email already in use'));
+              return Promise.reject('email already in use');
             }
           } catch(error) {
             console.error(error);
-            return Promise.reject(new Error('server Error'));
+            return Promise.reject('server Error');
           }
           return Promise.resolve(true);
         }),
@@ -72,14 +72,14 @@ export const customerRules = {
               include: db.User,
             });
             if (!Boolean(customer.User)) {
-              return Promise.reject(new Error('invalid credentials'));
+              return Promise.reject('invalid credentials');
             }
             const passwordMatches = await asyncCompare(req.body.password, customer.User.password);
             if (!passwordMatches) {
-              return Promise.reject(new Error('invalid credentials'));
+              return Promise.reject('invalid credentials');
             }
           } catch (err) {
-            return Promise.reject(new Error('invalid credentials'));
+            return Promise.reject('invalid credentials');
           }
           return Promise.resolve(true);
         }),

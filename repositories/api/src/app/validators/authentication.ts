@@ -15,7 +15,7 @@ export const authenticationRules = {
             await verifyAccessToken(token);
             return Promise.resolve(true);
           } catch {
-            return Promise.reject(new Error('server Error'));
+            return Promise.reject('server Error');
           }
         }),
     ];
@@ -34,9 +34,9 @@ export const authenticationRules = {
             if (tokenData.administratorId) {
               return Promise.resolve(true);
             }
-            return Promise.reject(new Error('unauthorized'));
+            return Promise.reject('unauthorized');
           } catch {
-            return Promise.reject(new Error('server Error'));
+            return Promise.reject('server Error');
           }
         }),
     ];
@@ -55,9 +55,9 @@ export const authenticationRules = {
             if (tokenData.customerId) {
               return Promise.resolve(true);
             }
-            return Promise.reject(new Error('unauthorized'));
+            return Promise.reject('unauthorized');
           } catch {
-            return Promise.reject(new Error('server Error'));
+            return Promise.reject('server Error');
           }
         }),
     ];
